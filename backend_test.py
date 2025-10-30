@@ -281,6 +281,211 @@ class EnergySystemAPITester:
         
         return response is not None
 
+    def test_device_state_update(self):
+        """Test device state update"""
+        if not self.created_device_id:
+            self.log_test("Update Device State", False, "No device available")
+            return False
+            
+        state_data = {
+            "device_id": self.created_device_id,
+            "is_on": False
+        }
+        
+        response = self.run_test(
+            "Update Device State (OFF)",
+            "PUT",
+            f"devices/{self.created_device_id}/state",
+            200,
+            data=state_data
+        )
+        
+        if response:
+            # Test turning it back on
+            state_data["is_on"] = True
+            response2 = self.run_test(
+                "Update Device State (ON)",
+                "PUT",
+                f"devices/{self.created_device_id}/state",
+                200,
+                data=state_data
+            )
+            return response2 is not None
+        return False
+
+    def test_generate_sample_data(self):
+        """Test sample data generation"""
+        response = self.run_test(
+            "Generate Sample Data",
+            "POST",
+            "admin/generate-sample-data?days=7",
+            200
+        )
+        
+        if response:
+            required_fields = ['message', 'logs_created', 'days_generated', 'devices']
+            missing_fields = [field for field in required_fields if field not in response]
+            if missing_fields:
+                self.log_test("Sample Data Fields", False, f"Missing fields: {missing_fields}")
+                return False
+            else:
+                self.log_test("Sample Data Fields", True, f"Created {response.get('logs_created', 0)} logs")
+                return True
+        return False
+
+    def test_hourly_consumption(self):
+        """Test hourly consumption endpoints"""
+        # Test last 24 hours
+        response = self.run_test(
+            "Hourly Consumption (24h)",
+            "GET",
+            "consumption/hourly",
+            200
+        )
+        
+        if response:
+            required_fields = ['period_start', 'period_end', 'hourly_data', 'total_consumption_kwh']
+            missing_fields = [field for field in required_fields if field not in response]
+            if missing_fields:
+                self.log_test("Hourly Consumption Fields", False, f"Missing fields: {missing_fields}")
+                return False
+            else:
+                self.log_test("Hourly Consumption Fields", True, f"Total: {response.get('total_consumption_kwh', 0)} kWh")
+                
+                # Test specific date
+                response2 = self.run_test(
+                    "Hourly Consumption (Specific Date)",
+                    "GET",
+                    "consumption/hourly?date=2025-01-23",
+                    200
+                )
+                return response2 is not None
+        return False
+
+    def test_room_specific_consumption(self):
+        """Test room-specific consumption"""
+        if not self.created_room_id:
+            self.log_test("Room Consumption", False, "No room available")
+            return False
+            
+        response = self.run_test(
+            "Room Specific Consumption",
+            "GET",
+            f"consumption/room/{self.created_room_id}",
+            200
+        )
+        
+        if response:
+            required_fields = ['room_id', 'period_hours', 'hourly_consumption', 'total_consumption_kwh']
+            missing_fields = [field for field in required_fields if field not in response]
+            if missing_fields:
+                self.log_test("Room Consumption Fields", False, f"Missing fields: {missing_fields}")
+                return False
+            else:
+                self.log_test("Room Consumption Fields", True, f"Total: {response.get('total_consumption_kwh', 0)} kWh")
+                return True
+        return False
+
+    def test_ai_predictions(self):
+        """Test AI predictions"""
+        response = self.run_test(
+            "AI Predictions",
+            "GET",
+            "ai/predictions?days_ahead=7",
+            200
+        )
+        
+        if response:
+            required_fields = ['prediction', 'historical_data', 'generated_at']
+            missing_fields = [field for field in required_fields if field not in response]
+            if missing_fields:
+                self.log_test("AI Predictions Fields", False, f"Missing fields: {missing_fields}")
+                return False
+            else:
+                prediction_text = response.get('prediction', '')
+                if 'not available' in prediction_text.lower() or 'error' in prediction_text.lower():
+                    self.log_test("AI Predictions Content", False, f"AI not working: {prediction_text[:100]}")
+                    return False
+                else:
+                    self.log_test("AI Predictions Content", True, "AI prediction generated successfully")
+                    return True
+        return False
+
+    def test_ai_anomalies(self):
+        """Test AI anomaly detection"""
+        response = self.run_test(
+            "AI Anomaly Detection",
+            "GET",
+            "ai/anomalies",
+            200
+        )
+        
+        if response:
+            required_fields = ['analysis', 'data_points_analyzed', 'generated_at']
+            missing_fields = [field for field in required_fields if field not in response]
+            if missing_fields:
+                self.log_test("AI Anomalies Fields", False, f"Missing fields: {missing_fields}")
+                return False
+            else:
+                analysis_text = response.get('analysis', '')
+                if 'not available' in analysis_text.lower() or 'error' in analysis_text.lower():
+                    self.log_test("AI Anomalies Content", False, f"AI not working: {analysis_text[:100]}")
+                    return False
+                else:
+                    self.log_test("AI Anomalies Content", True, "AI anomaly detection working")
+                    return True
+        return False
+
+    def test_ai_cost_estimation(self):
+        """Test AI cost estimation"""
+        response = self.run_test(
+            "AI Cost Estimation",
+            "GET",
+            "ai/cost-estimation?rate_per_kwh=0.15",
+            200
+        )
+        
+        if response:
+            required_fields = ['consumption_kwh', 'rate_per_kwh', 'cost_analysis', 'generated_at']
+            missing_fields = [field for field in required_fields if field not in response]
+            if missing_fields:
+                self.log_test("AI Cost Estimation Fields", False, f"Missing fields: {missing_fields}")
+                return False
+            else:
+                cost_analysis = response.get('cost_analysis', '')
+                if 'not available' in cost_analysis.lower() or 'AI error' in cost_analysis:
+                    self.log_test("AI Cost Estimation Content", False, f"AI not working: {cost_analysis[:100]}")
+                    return False
+                else:
+                    self.log_test("AI Cost Estimation Content", True, "AI cost estimation working")
+                    return True
+        return False
+
+    def test_ai_recommendations(self):
+        """Test AI smart recommendations"""
+        response = self.run_test(
+            "AI Smart Recommendations",
+            "GET",
+            "ai/recommendations",
+            200
+        )
+        
+        if response:
+            required_fields = ['recommendations', 'total_rooms', 'total_devices', 'generated_at']
+            missing_fields = [field for field in required_fields if field not in response]
+            if missing_fields:
+                self.log_test("AI Recommendations Fields", False, f"Missing fields: {missing_fields}")
+                return False
+            else:
+                recommendations_text = response.get('recommendations', '')
+                if 'not available' in recommendations_text.lower() or 'error' in recommendations_text.lower():
+                    self.log_test("AI Recommendations Content", False, f"AI not working: {recommendations_text[:100]}")
+                    return False
+                else:
+                    self.log_test("AI Recommendations Content", True, "AI recommendations working")
+                    return True
+        return False
+
     def test_delete_room(self):
         """Test room deletion"""
         if not self.created_room_id:
