@@ -45,14 +45,17 @@ class EnergySystemAPITester:
             test_headers.update(headers)
 
         try:
+            # Use longer timeout for AI endpoints
+            timeout = 30 if 'ai/' in endpoint or 'generate-sample-data' in endpoint else 10
+            
             if method == 'GET':
-                response = requests.get(url, headers=test_headers, timeout=10)
+                response = requests.get(url, headers=test_headers, timeout=timeout)
             elif method == 'POST':
-                response = requests.post(url, json=data, headers=test_headers, timeout=10)
+                response = requests.post(url, json=data, headers=test_headers, timeout=timeout)
             elif method == 'PUT':
-                response = requests.put(url, json=data, headers=test_headers, timeout=10)
+                response = requests.put(url, json=data, headers=test_headers, timeout=timeout)
             elif method == 'DELETE':
-                response = requests.delete(url, headers=test_headers, timeout=10)
+                response = requests.delete(url, headers=test_headers, timeout=timeout)
 
             success = response.status_code == expected_status
             details = f"Status: {response.status_code}"
