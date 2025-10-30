@@ -503,7 +503,7 @@ class EnergySystemAPITester:
 
     def run_all_tests(self):
         """Run all API tests"""
-        print("🚀 Starting Energy Management System API Tests")
+        print("🚀 Starting Smart Energy Management System Backend Tests")
         print(f"🔗 Testing against: {self.base_url}")
         print("=" * 60)
         
@@ -524,17 +524,34 @@ class EnergySystemAPITester:
         print("\n⚡ Device Management Tests")
         self.test_create_device()
         self.test_get_devices()
+        self.test_device_state_update()
         
-        # Occupancy and energy tests
-        print("\n👥 Occupancy & Energy Tests")
-        self.test_occupancy_update()
-        self.test_simulate_occupancy()
+        # Sample data generation
+        print("\n📊 Sample Data Generation")
+        self.test_generate_sample_data()
+        
+        # Hourly consumption tests
+        print("\n⏰ Hourly Consumption Tests")
+        self.test_hourly_consumption()
+        self.test_room_specific_consumption()
         
         # Dashboard tests
         print("\n📊 Dashboard Tests")
         self.test_dashboard_stats()
         self.test_energy_trend()
         self.test_room_consumption()
+        
+        # AI Features tests
+        print("\n🤖 AI Features Tests (Mistral AI)")
+        self.test_ai_predictions()
+        self.test_ai_anomalies()
+        self.test_ai_cost_estimation()
+        self.test_ai_recommendations()
+        
+        # Occupancy and energy tests
+        print("\n👥 Occupancy & Energy Tests")
+        self.test_occupancy_update()
+        self.test_simulate_occupancy()
         
         # Cleanup tests
         print("\n🧹 Cleanup Tests")
