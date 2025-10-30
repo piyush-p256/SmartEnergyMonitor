@@ -244,7 +244,7 @@ const Dashboard = ({ user, onLogout, api }) => {
           </TabsContent>
 
           <TabsContent value="analytics">
-            <EnergyCharts api={api} />
+            <EnergyChartsEnhanced api={api} />
           </TabsContent>
         </Tabs>
 
