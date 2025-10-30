@@ -1,8 +1,8 @@
 {
-  "timestamp": "2025-10-30T13:08:47.030918",
+  "timestamp": "2025-10-30T13:09:36.380517",
   "total_tests": 14,
-  "passed_tests": 13,
-  "success_rate": 92.85714285714286,
+  "passed_tests": 14,
+  "success_rate": 100.0,
   "test_details": [
     {
       "test": "User Registration",
@@ -36,8 +36,8 @@
     },
     {
       "test": "Update Occupancy",
-      "success": false,
-      "details": "Status: 500, Expected: 200, Response: Internal Server Error"
+      "success": true,
+      "details": "Status: 200"
     },
     {
       "test": "Simulate Occupancy",
