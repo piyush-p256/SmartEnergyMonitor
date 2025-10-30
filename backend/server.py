@@ -237,7 +237,11 @@ async def update_occupancy(update: OccupancyUpdate, current_user: User = Depends
     # If room becomes unoccupied, check if we should turn off devices
     if not update.is_occupied:
         # Get last_seen time
-        last_seen = datetime.fromisoformat(room.get('last_seen', update.timestamp.isoformat()))
+        last_seen_raw = room.get('last_seen', update.timestamp.isoformat())
+        if isinstance(last_seen_raw, str):
+            last_seen = datetime.fromisoformat(last_seen_raw)
+        else:
+            last_seen = last_seen_raw if last_seen_raw else update.timestamp
         time_diff = (update.timestamp - last_seen).total_seconds()
         
         # If unoccupied for more than 5 minutes (300 seconds), turn off devices
