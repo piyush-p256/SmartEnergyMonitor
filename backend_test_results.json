@@ -1,0 +1,78 @@
+{
+  "timestamp": "2025-10-30T13:08:47.030918",
+  "total_tests": 14,
+  "passed_tests": 13,
+  "success_rate": 92.85714285714286,
+  "test_details": [
+    {
+      "test": "User Registration",
+      "success": true,
+      "details": "Status: 200"
+    },
+    {
+      "test": "User Login",
+      "success": true,
+      "details": "Status: 200"
+    },
+    {
+      "test": "Create Room",
+      "success": true,
+      "details": "Status: 200"
+    },
+    {
+      "test": "Get Rooms",
+      "success": true,
+      "details": "Status: 200"
+    },
+    {
+      "test": "Create Device",
+      "success": true,
+      "details": "Status: 200"
+    },
+    {
+      "test": "Get Devices",
+      "success": true,
+      "details": "Status: 200"
+    },
+    {
+      "test": "Update Occupancy",
+      "success": false,
+      "details": "Status: 500, Expected: 200, Response: Internal Server Error"
+    },
+    {
+      "test": "Simulate Occupancy",
+      "success": true,
+      "details": "Status: 200"
+    },
+    {
+      "test": "Dashboard Stats",
+      "success": true,
+      "details": "Status: 200"
+    },
+    {
+      "test": "Dashboard Stats Fields",
+      "success": true,
+      "details": "All required fields present"
+    },
+    {
+      "test": "Energy Trend",
+      "success": true,
+      "details": "Status: 200"
+    },
+    {
+      "test": "Room Consumption",
+      "success": true,
+      "details": "Status: 200"
+    },
+    {
+      "test": "Delete Device",
+      "success": true,
+      "details": "Status: 200"
+    },
+    {
+      "test": "Delete Room",
+      "success": true,
+      "details": "Status: 200"
+    }
+  ]
+}
