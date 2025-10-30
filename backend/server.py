@@ -502,51 +502,38 @@ async def update_occupancy(update: OccupancyUpdate, current_user: User = Depends
         "last_seen": update.timestamp.isoformat()
     }
     
-    # If room becomes unoccupied, check if we should turn off devices
+    # If room becomes unoccupied, turn off ALL devices immediately
     if not update.is_occupied:
-        # Get last_seen time
-        last_seen_raw = room.get('last_seen', update.timestamp.isoformat())
-        if isinstance(last_seen_raw, str):
-            last_seen = datetime.fromisoformat(last_seen_raw)
-        else:
-            last_seen = last_seen_raw if last_seen_raw else update.timestamp
-        time_diff = (update.timestamp - last_seen).total_seconds()
+        devices = await db.devices.find({"room_id": update.room_id, "is_on": True}, {"_id": 0}).to_list(1000)
         
-        # If unoccupied for more than 5 minutes (300 seconds), turn off devices
-        if time_diff >= 300 or not room.get('is_occupied', True):
-            devices = await db.devices.find({"room_id": update.room_id, "is_on": True}, {"_id": 0}).to_list(1000)
+        energy_saved = 0
+        affected_device_ids = []
+        
+        # Turn off ALL devices when room is unoccupied
+        for device in devices:
+            # Calculate potential energy saved (estimate 1 hour)
+            energy_saved += (device['power_rating'] / 1000)  # 1 hour worth in kWh
+            affected_device_ids.append(device['id'])
             
-            energy_saved = 0
-            affected_device_ids = []
-            
-            for device in devices:
-                # Keep one light on for safety
-                if device['device_type'] == 'light' and not affected_device_ids:
-                    continue
-                
-                # Calculate energy that would have been consumed
-                energy_saved += (device['power_rating'] / 1000) * (time_diff / 3600)  # Convert to kWh
-                affected_device_ids.append(device['id'])
-                
-                # Turn off device
-                await db.devices.update_one(
-                    {"id": device['id']},
-                    {"$set": {
-                        "is_on": False,
-                        "last_state_change": datetime.now(timezone.utc).isoformat()
-                    }}
-                )
-            
-            # Log energy savings
-            if energy_saved > 0:
-                saving = EnergySaving(
-                    room_id=update.room_id,
-                    energy_saved=energy_saved,
-                    devices_affected=affected_device_ids
-                )
-                saving_dict = saving.model_dump()
-                saving_dict['timestamp'] = saving_dict['timestamp'].isoformat()
-                await db.energy_savings.insert_one(saving_dict)
+            # Turn off device
+            await db.devices.update_many(
+                {"room_id": update.room_id, "is_on": True},
+                {"$set": {
+                    "is_on": False,
+                    "last_state_change": datetime.now(timezone.utc).isoformat()
+                }}
+            )
+        
+        # Log energy savings
+        if energy_saved > 0:
+            saving = EnergySaving(
+                room_id=update.room_id,
+                energy_saved=energy_saved,
+                devices_affected=affected_device_ids
+            )
+            saving_dict = saving.model_dump()
+            saving_dict['timestamp'] = saving_dict['timestamp'].isoformat()
+            await db.energy_savings.insert_one(saving_dict)
     else:
         # Room is occupied, turn on devices
         await db.devices.update_many(
