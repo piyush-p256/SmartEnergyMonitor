@@ -8,7 +8,7 @@ import { LogOut, Zap, Power, TrendingDown, Activity, Plus } from 'lucide-react';
 import RoomManager from '@/components/RoomManager';
 import DeviceManager from '@/components/DeviceManager';
 import CameraFeed from '@/components/CameraFeed';
-import EnergyCharts from '@/components/EnergyCharts';
+import EnergyChartsEnhanced from '@/components/EnergyChartsEnhanced';
 import RoomList from '@/components/RoomList';
 
 const Dashboard = ({ user, onLogout, api }) => {
