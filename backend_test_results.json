@@ -1,8 +1,8 @@
 {
-  "timestamp": "2025-10-30T13:09:36.380517",
-  "total_tests": 14,
-  "passed_tests": 14,
-  "success_rate": 100.0,
+  "timestamp": "2025-10-30T16:09:47.654427",
+  "total_tests": 27,
+  "passed_tests": 21,
+  "success_rate": 77.77777777777779,
   "test_details": [
     {
       "test": "User Registration",
@@ -35,14 +35,44 @@
       "details": "Status: 200"
     },
     {
-      "test": "Update Occupancy",
+      "test": "Update Device State (OFF)",
       "success": true,
       "details": "Status: 200"
     },
     {
-      "test": "Simulate Occupancy",
+      "test": "Update Device State (ON)",
       "success": true,
       "details": "Status: 200"
+    },
+    {
+      "test": "Generate Sample Data",
+      "success": false,
+      "details": "Exception: HTTPSConnectionPool(host='smart-energy-8.preview.emergentagent.com', port=443): Read timed out. (read timeout=10)"
+    },
+    {
+      "test": "Hourly Consumption (24h)",
+      "success": true,
+      "details": "Status: 200"
+    },
+    {
+      "test": "Hourly Consumption Fields",
+      "success": true,
+      "details": "Total: 0.5934044000023578 kWh"
+    },
+    {
+      "test": "Hourly Consumption (Specific Date)",
+      "success": true,
+      "details": "Status: 200"
+    },
+    {
+      "test": "Room Specific Consumption",
+      "success": true,
+      "details": "Status: 200"
+    },
+    {
+      "test": "Room Consumption Fields",
+      "success": true,
+      "details": "Total: 0.5934044000023578 kWh"
     },
     {
       "test": "Dashboard Stats",
@@ -61,6 +91,41 @@
     },
     {
       "test": "Room Consumption",
+      "success": true,
+      "details": "Status: 200"
+    },
+    {
+      "test": "AI Predictions",
+      "success": true,
+      "details": "Status: 200"
+    },
+    {
+      "test": "AI Predictions Content",
+      "success": false,
+      "details": "AI not working: Error generating prediction: API error occurred: Status 429. Body: {\"object\":\"error\",\"message\":\"Serv"
+    },
+    {
+      "test": "AI Anomaly Detection",
+      "success": false,
+      "details": "Exception: HTTPSConnectionPool(host='smart-energy-8.preview.emergentagent.com', port=443): Read timed out. (read timeout=10)"
+    },
+    {
+      "test": "AI Cost Estimation",
+      "success": false,
+      "details": "Exception: HTTPSConnectionPool(host='smart-energy-8.preview.emergentagent.com', port=443): Read timed out. (read timeout=10)"
+    },
+    {
+      "test": "AI Smart Recommendations",
+      "success": false,
+      "details": "Exception: HTTPSConnectionPool(host='smart-energy-8.preview.emergentagent.com', port=443): Read timed out. (read timeout=10)"
+    },
+    {
+      "test": "Update Occupancy",
+      "success": false,
+      "details": "Exception: HTTPSConnectionPool(host='smart-energy-8.preview.emergentagent.com', port=443): Read timed out. (read timeout=10)"
+    },
+    {
+      "test": "Simulate Occupancy",
       "success": true,
       "details": "Status: 200"
     },
